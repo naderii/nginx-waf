@@ -28,7 +28,10 @@
 
 
 ```bash
+
 docker compose up -d
+
+http://localhost:8080/?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E
 
 docker exec -it nginx-waf-nginx-1 /usr/local/nginx/sbin/nginx -s reload
 ```
