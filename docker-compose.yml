@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./modsecurity.conf:/etc/nginx/modsecurity.conf
+      - ./html:/usr/local/nginx/html
+      - ./logs:/var/log/nginx

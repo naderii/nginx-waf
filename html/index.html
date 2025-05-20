@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>دوره امنیت وب - شبیه‌ساز حمله XSS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      color: #2c3e50;
+      margin: 0; padding: 0;
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: #ffffff;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      width: 92%;
+      max-width: 640px;
+      padding: 40px 30px;
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #1a202c;
+    }
+
+    .status {
+      margin-bottom: 25px;
+      font-size: 1rem;
+      color: #fa541c;
+    }
+
+    #msg {
+      font-family: 'Courier New', monospace;
+      font-size: 1.05rem;
+      color: #2e2e2e;
+      min-height: 120px;
+      white-space: pre-wrap;
+      text-align: left;
+      border: 1px solid #dcdcdc;
+      padding: 18px 22px;
+      border-radius: 8px;
+      background: #f8f8f8;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s ease;
+    }
+
+    @keyframes blinkCursor {
+      0%, 100% { border-color: transparent; }
+      50% { border-color: #444; }
+    }
+
+    #msg.typing::after {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 20px;
+      background: transparent;
+      border-right: 2px solid #444;
+      animation: blinkCursor 1s steps(2, start) infinite;
+      position: absolute;
+      right: 22px;
+      top: 18px;
+    }
+
+    .console-sim {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #7a7a7a;
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .console-sim.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>دوره امنیت وب</h1>
+    <p class="status">وضعیت: ModSecurity <strong>غیرفعال</strong> است</p>
+
+    <div id="msg"></div>
+    <div id="consoleSim" class="console-sim">شبیه‌سازی دسترسی به کنسول سیستم...</div>
+  </div>
+
+  <script>
+    function typeEffect(element, text, speed = 50) {
+      element.classList.add('typing');
+      element.textContent = "";
+      let i = 0;
+      return new Promise((resolve) => {
+        function typing() {
+          if (i < text.length) {
+            element.textContent += text.charAt(i);
+            i++;
+            setTimeout(typing, speed);
+          } else {
+            element.classList.remove('typing');
+            resolve();
+          }
+        }
+        typing();
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      const params = new URLSearchParams(window.location.search);
+      const input = params.get('q');
+      const msg = document.getElementById('msg');
+      const consoleSim = document.getElementById('consoleSim');
+
+      if (input && input.toLowerCase().includes('<script>')) {
+        const warningText = 
+`🚨 هشدار امنیتی 🚨
+شناسایی حمله XSS!
+ورودی شما شامل کد مخرب است.
+
+دسترسی به کنسول سیستم در حال شبیه‌سازی...
+لطفاً منتظر بمانید...`;
+
+        await typeEffect(msg, warningText, 40);
+        consoleSim.classList.add('visible');
+
+        let dots = 0;
+        const interval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          consoleSim.textContent = " دسترسی به کنسول سیستم" + ".".repeat(dots);
+        }, 500);
+
+        setTimeout(() => {
+          clearInterval(interval);
+          consoleSim.textContent = "✅  دسترسی به کنسول سیستم کامل شد.";
+        }, 5000);
+
+        setTimeout(() => {
+          const extraMsg = "\n\n🛡️ توجه: این فقط یک شبیه‌سازی است و سرور شما امن است.";
+          msg.textContent += extraMsg;
+        }, 7000);
+
+      } else if (input) {
+        msg.textContent = `ورودی شما:\n${input}`;
+      } else {
+        msg.textContent = "پارامتر q در آدرس وارد نشده است.";
+      }
+    });
+  </script>
+</body>
+</html>
