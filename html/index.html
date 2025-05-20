@@ -5,109 +5,272 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>دوره امنیت وب - شبیه‌ساز حمله XSS</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
-
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1e40af;
+      --danger: #dc2626;
+      --danger-dark: #b91c1c;
+      --success: #16a34a;
+      --warning: #d97706;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #64748b;
+      --border: #e2e8f0;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
-      font-family: 'Vazirmatn', Tahoma, sans-serif;
-      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-      color: #2c3e50;
-      margin: 0; padding: 0;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      color: var(--dark);
+      min-height: 100vh;
       display: flex;
-      height: 100vh;
       align-items: center;
       justify-content: center;
+      padding: 20px;
+      line-height: 1.6;
     }
-
+    
     .container {
-      background: #ffffff;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-      border-radius: 12px;
-      width: 92%;
-      max-width: 640px;
-      padding: 40px 30px;
-      text-align: center;
-      transition: all 0.3s ease-in-out;
-    }
-
-    h1 {
-      margin-bottom: 10px;
-      font-weight: 700;
-      font-size: 1.8rem;
-      color: #1a202c;
-    }
-
-    .status {
-      margin-bottom: 25px;
-      font-size: 1rem;
-      color: #fa541c;
-    }
-
-    #msg {
-      font-family: 'Courier New', monospace;
-      font-size: 1.05rem;
-      color: #2e2e2e;
-      min-height: 120px;
-      white-space: pre-wrap;
-      text-align: left;
-      border: 1px solid #dcdcdc;
-      padding: 18px 22px;
-      border-radius: 8px;
-      background: #f8f8f8;
-      position: relative;
+      background: white;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 700px;
+      padding: 40px;
       overflow: hidden;
-      transition: background 0.3s ease;
+      position: relative;
+      transition: all 0.3s ease;
     }
-
-    @keyframes blinkCursor {
-      0%, 100% { border-color: transparent; }
-      50% { border-color: #444; }
+    
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary), var(--danger));
     }
-
-    #msg.typing::after {
-      content: "";
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    
+    .header .subtitle {
+      color: var(--gray);
+      font-size: 16px;
+      font-weight: 400;
+    }
+    
+    .status {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 25px;
+      background-color: #fee2e2;
+      color: var(--danger-dark);
+    }
+    
+    .status::before {
+      content: '';
       display: inline-block;
       width: 8px;
-      height: 20px;
-      background: transparent;
-      border-right: 2px solid #444;
-      animation: blinkCursor 1s steps(2, start) infinite;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--danger);
+      margin-left: 8px;
+    }
+    
+    .terminal {
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 200px;
+      position: relative;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    
+    .terminal::before {
+      content: '';
       position: absolute;
-      right: 22px;
-      top: 18px;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-
-    .console-sim {
+    
+    .terminal-header {
+      position: absolute;
+      top: 12px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+    }
+    
+    .terminal-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .terminal-btn.red {
+      background: #ef4444;
+    }
+    
+    .terminal-btn.yellow {
+      background: #f59e0b;
+    }
+    
+    .terminal-btn.green {
+      background: #10b981;
+    }
+    
+    #msg {
+      margin-top: 40px;
+      white-space: pre-wrap;
+      text-align: right;
+    }
+    
+    .prompt {
+      color: #10b981;
+      font-weight: bold;
+    }
+    
+    .command {
+      color: #60a5fa;
+    }
+    
+    .error {
+      color: #ef4444;
+    }
+    
+    .warning {
+      color: #f59e0b;
+    }
+    
+    .success {
+      color: #10b981;
+    }
+    
+    .info {
+      color: #60a5fa;
+    }
+    
+    @keyframes blinkCursor {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+    
+    #msg.typing::after {
+      content: "|";
+      display: inline-block;
+      color: #f8fafc;
+      animation: blinkCursor 0.7s infinite;
+      margin-right: 2px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
       margin-top: 20px;
-      font-size: 0.9rem;
-      color: #7a7a7a;
-      font-style: italic;
-      opacity: 0;
-      transition: opacity 1s ease;
+      overflow: hidden;
     }
-
-    .console-sim.visible {
-      opacity: 1;
+    
+    .progress {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--danger), var(--warning));
+      transition: width 0.3s ease;
+    }
+    
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 20px;
+      }
+      
+      .header h1 {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>دوره امنیت وب</h1>
-    <p class="status">وضعیت: ModSecurity <strong>غیرفعال</strong> است</p>
-
-    <div id="msg"></div>
-    <div id="consoleSim" class="console-sim">شبیه‌سازی دسترسی به کنسول سیستم...</div>
+    <div class="header">
+      <h1>آزمایشگاه امنیت وب</h1>
+      <div class="subtitle">شبیه‌ساز حمله XSS</div>
+    </div>
+    
+    <div class="status">ModSecurity غیرفعال است</div>
+    
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="terminal-btn red"></div>
+        <div class="terminal-btn yellow"></div>
+        <div class="terminal-btn green"></div>
+      </div>
+      
+      <div id="msg"></div>
+      
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+    
+    <div class="footer">
+       این یک شبیه‌ساز آموزشی است - دوره امنیت وب خانم استاد ربانی است
+    </div>
   </div>
 
   <script>
-    function typeEffect(element, text, speed = 50) {
+    function typeEffect(element, text, speed = 30) {
       element.classList.add('typing');
       element.textContent = "";
       let i = 0;
       return new Promise((resolve) => {
         function typing() {
           if (i < text.length) {
-            element.textContent += text.charAt(i);
+            const char = text.charAt(i);
+            if (char === '\n') {
+              element.innerHTML += '<br>';
+            } else {
+              element.textContent += char;
+            }
             i++;
             setTimeout(typing, speed);
           } else {
@@ -118,45 +281,68 @@
         typing();
       });
     }
+    
+    function updateProgress(percent) {
+      const progressBar = document.getElementById('progress');
+      progressBar.style.width = `${percent}%`;
+    }
 
     window.addEventListener("DOMContentLoaded", async () => {
       const params = new URLSearchParams(window.location.search);
       const input = params.get('q');
       const msg = document.getElementById('msg');
-      const consoleSim = document.getElementById('consoleSim');
-
+      
+      // شبیه‌سازی ترمینال
+      await typeEffect(msg, '<span class="prompt">user@security-lab:~$</span> <span class="command">scan_xss</span>\n', 20);
+      
       if (input && input.toLowerCase().includes('<script>')) {
-        const warningText = 
-`🚨 هشدار امنیتی 🚨
-شناسایی حمله XSS!
-ورودی شما شامل کد مخرب است.
-
-دسترسی به کنسول سیستم در حال شبیه‌سازی...
-لطفاً منتظر بمانید...`;
-
-        await typeEffect(msg, warningText, 40);
-        consoleSim.classList.add('visible');
-
-        let dots = 0;
-        const interval = setInterval(() => {
-          dots = (dots + 1) % 4;
-          consoleSim.textContent = " دسترسی به کنسول سیستم" + ".".repeat(dots);
-        }, 500);
-
-        setTimeout(() => {
-          clearInterval(interval);
-          consoleSim.textContent = "✅  دسترسی به کنسول سیستم کامل شد.";
-        }, 5000);
-
-        setTimeout(() => {
-          const extraMsg = "\n\n🛡️ توجه: این فقط یک شبیه‌سازی است و سرور شما امن است.";
-          msg.textContent += extraMsg;
-        }, 7000);
-
+        // حالت حمله شناسایی شده
+        await typeEffect(msg, '<span class="warning">[!] هشدار: شناسایی کد مخرب در ورودی کاربر</span>\n', 20);
+        await typeEffect(msg, '<span class="error">[XSS] حمله XSS تشخیص داده شد!</span>\n\n', 20);
+        
+        // شبیه‌سازی اسکن
+        await typeEffect(msg, '<span class="info">[*] شروع تحلیل کد مخرب...</span>\n', 20);
+        
+        // پیشرفت بار
+        for (let i = 0; i <= 100; i++) {
+          setTimeout(() => updateProgress(i), i * 30);
+        }
+        
+        // نتایج اسکن
+        setTimeout(async () => {
+          await typeEffect(msg, '\n<span class="success">[✓] تحلیل کامل شد. جزئیات حمله:</span>\n', 20);
+          await typeEffect(msg, '- نوع حمله: Reflected XSS\n', 10);
+          await typeEffect(msg, '- سطح خطر: بحرانی\n', 10);
+          await typeEffect(msg, '- محل آسیب‌پذیری: پارامتر URL "q"\n\n', 10);
+          
+          await typeEffect(msg, '<span class="info">[*] شبیه‌سازی دسترسی به سیستم...</span>\n', 20);
+          
+          // شبیه‌سازی دسترسی
+          setTimeout(async () => {
+            await typeEffect(msg, '<span class="command">access_cookies()</span>\n', 20);
+            await typeEffect(msg, '<span class="error">[!] دسترسی به کوکی‌های نشست با موفقیت انجام شد!</span>\n', 20);
+            
+            setTimeout(async () => {
+              await typeEffect(msg, '\n<span class="warning">[!] توجه: این فقط یک شبیه‌سازی آموزشی است</span>\n', 20);
+              await typeEffect(msg, '<span class="info">برای محافظت در برابر XSS از موارد زیر استفاده کنید:</span>\n', 20);
+              await typeEffect(msg, '- اعتبارسنجی ورودی کاربر\n- خروجی‌گذاری مناسب\n- استفاده از CSP\n- فعال‌سازی ModSecurity', 10);
+            }, 1000);
+          }, 2000);
+        }, 3000);
+        
       } else if (input) {
-        msg.textContent = `ورودی شما:\n${input}`;
+        // حالت ورودی عادی
+        await typeEffect(msg, '<span class="success">[✓] هیچ کد مخربی یافت نشد</span>\n\n', 20);
+        await typeEffect(msg, '<span class="info">ورودی کاربر:</span>\n', 20);
+        await typeEffect(msg, input + '\n\n', 10);
+        await typeEffect(msg, '<span class="success">سیستم شما امن است.</span>', 20);
+        updateProgress(100);
+        
       } else {
-        msg.textContent = "پارامتر q در آدرس وارد نشده است.";
+        // حالت بدون ورودی
+        await typeEffect(msg, '<span class="info">[*] درخواست شما حاوی پارامتر "q" نیست</span>\n', 20);
+        await typeEffect(msg, '<span class="command">برای آزمایش، پارامتر q را به URL اضافه کنید</span>\n', 20);
+        updateProgress(0);
       }
     });
   </script>
